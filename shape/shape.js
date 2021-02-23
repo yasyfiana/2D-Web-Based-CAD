@@ -3,13 +3,11 @@ var vertexShaderText =
 'precision mediump float;',
 '',
 'attribute vec2 vertPosition;',
-'attribute vec3 vertColor;',
-'varying vec3 fragColor;',
+
 'uniform vec2 u_resolution;',
 '',
 'void main()',
 '{',
-'   fragColor = vertColor;',
     // convert the rectangle from pixels to 0.0 to 1.0
 '   vec2 zeroToOne = vertPosition / u_resolution;',
     // convert from 0->1 to 0->2
@@ -24,10 +22,10 @@ var fragmentShaderText =
 [
 'precision mediump float;',
 '',
-'varying vec3 fragColor;',
+'uniform vec4 fragColor;',
 'void main()',
 '{',
-'  gl_FragColor = vec4(fragColor, 1.0);',
+'  gl_FragColor = fragColor;',
 '}'
 ].join('\n');
 
@@ -58,79 +56,67 @@ function createProgram(gl, vertexShader, fragmentShader) {
     gl.deleteProgram(program);
 }
 
-function main(vertices, x) {
-//
-// initialization
-//
-    var canvas = document.querySelector("#cnvs"); // the canvas
-    var gl = canvas.getContext("webgl");
-    if (!gl) {
-        console.log('WebGL not supported, falling back on experimental-webgl');
-    }
-    if (!gl) {
-		alert('Your browser does not support WebGL');
-	}
-    gl.clearColor(0.75, 0.85, 0.8, 1.0);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+var canvas = document.querySelector("#cnvs"); // the canvas
+var gl = canvas.getContext("webgl");
+if (!gl) {
+    console.log('WebGL not supported, falling back on experimental-webgl');
+}
+if (!gl) {
+    alert('Your browser does not support WebGL');
+}
+gl.clearColor(0.75, 0.85, 0.8, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // create shaders, upload the GLSL source, compile the shaders, and link the two shaders into a program
-    var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderText);
-    var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderText);
+// create shaders, upload the GLSL source, compile the shaders, and link the two shaders into a program
+var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderText);
+var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderText);
+var program = createProgram(gl, vertexShader, fragmentShader);
+var positionAttributeLocation = gl.getAttribLocation(program, "vertPosition");
+var colorAttribLocation = gl.getUniformLocation(program, 'fragColor');
 
-    var program = createProgram(gl, vertexShader, fragmentShader);
+var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+// Create a buffer and bind it to ARRAY_BUFFER
+var positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.enableVertexAttribArray(positionAttributeLocation);
 
-
-    var positionAttributeLocation = gl.getAttribLocation(program, "vertPosition");
-    var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
-    var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-
-    // Create a buffer and bind it to ARRAY_BUFFER
-    var positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+// gl.enableVertexAttribArray(colorAttribLocation);
+// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
 //
 // render
 //
-    // convert from clip space to pixels
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+// convert from clip space to pixels
+gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+gl.useProgram(program);
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+// Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+var size = 2;         // Number of elements per attribute
+var type = gl.FLOAT;   // type of elements = the data is 32bit floats
+var normalize = false; // don't normalize the data
+var stride = 0;  // Size of an individual vertex
+var offset = 0;        // Offset from the beginning of a single vertex to this attribute
+gl.vertexAttribPointer(
+    positionAttributeLocation, size, type, normalize, stride, offset);
+
+    // gl.vertexAttribPointer(
+//     colorAttribLocation, 3, type, normalize, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
+
+gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
 
-    gl.useProgram(program);
-
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.enableVertexAttribArray(colorAttribLocation);
-
-    // Bind the position buffer.
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2;         // Number of elements per attribute
-    var type = gl.FLOAT;   // type of elements = the data is 32bit floats
-    var normalize = false; // don't normalize the data
-    var stride = 5 * Float32Array.BYTES_PER_ELEMENT;  // Size of an individual vertex
-    var offset = 0;        // Offset from the beginning of a single vertex to this attribute
-    gl.vertexAttribPointer(
-        positionAttributeLocation, size, type, normalize, stride, offset);
-    gl.vertexAttribPointer(
-        colorAttribLocation, 3, type, normalize, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
-
-    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-    // draw
+function draw() {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     var offset = 0;
-    var count = x;
-    gl.drawArrays(gl.TRIANGLES, offset, count);
+    
+    for (var i = 0; i<obj.length; i++) {
+        console.log(obj[i]);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj[i].vertices), gl.STATIC_DRAW);
+        gl.uniform4f(colorAttribLocation,obj[i].colors[0],obj[i].colors[1],obj[i].colors[2], 1);
+        gl.drawArrays(obj[i].mode, offset, obj[i].count);
+    }
 }
-//contoh array setup posisi dan warna
-// var rect = [
-//     10, 20, 1.0, 1.0, 0.0,
-//     80, 20, 1.0, 1.0, 0.0,
-//     10, 30, 1.0, 1.0, 0.0,
-//     10, 30, 1.0, 1.0, 0.0,
-//     80, 20, 1.0, 1.0, 0.0,
-//     80, 30, 1.0, 1.0, 0.0,
-//     ];
-// main(rect, 6);
 
 
 function setRect(x,y,size,r,g,b){
@@ -138,32 +124,143 @@ function setRect(x,y,size,r,g,b){
     var x2 = x + size;
     var y1 = y;
     var y2 = y + size;
-
-    var rect =[
-        x1, y1, r, g, b,
-        x2, y1, r, g, b,
-        x1, y2, r, g, b,
-        x1, y2, r, g, b,
-        x2, y1, r, g, b,
-        x2, y2, r, g, b,
+    var vertices=[
+        x1, y1,
+        x2, y1,
+        x1, y2,
+        x1, y2,
+        x2, y1,
+        x2, y2,
+    ]
+    
+    var color=[
+        r,g,b,
     ]
 
-    return rect;
+    obj.push({
+        "mode" : gl.TRIANGLES,
+        "vertices" : vertices,
+        "count" : 6,
+        "colors": color
+    })
 }
-// create rectangle (x=6)
-main(setRect(20,20,50,1,1,0),6);
-
-function setTriangle(x1,y1,x2,y2,x3,y3,r,g,b){
-    var triangle =[
-        // X, Y,       R, G, B
-        x1, y1, r, g, b,
-        x2, y2, r, g, b,
-        x3, y3, r, g, b,
+function setLine(x1,y1,x2,y2,r,g,b){
+    var line =[
+        x1,y1,
+        x2,y2,
     ]
-    return triangle;
+
+    var color=[
+        r,g,b,
+    ]
+
+    obj.push({
+        "mode" : gl.LINES,
+        "vertices" : line,
+        "count" : 2,
+        "colors": color
+
+    })
 }
-// create triangle (x=3)
-// main(setTriangle(100, 200, 800, 200, 100, 300, 1, 1, 0), 3);
+
+function clear(){ //belom bisa gatau knp wkwk
+    obj =[];
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
+/// MAIN
+var obj=[];
+
+// setRect(20,20,50,1,1,0);
+// setLine(30,50,100,80,1,1,0)
+// // setRect(30,50,100,1,1,0);
+// draw();
+////////////
+console.log(obj);
 
 
-//poligon beloman
+///mencoba pickup pickup
+
+var canva = document.querySelector('#cnvs');
+var count_vec=0;
+var verticez=[];
+var new_vert=[];
+
+function getMousePosition(canvas, event) { 
+    let pos = []; 
+    let x = event.clientX-8;  //8 tuh jarak putih ke canvas !!nanti perlu diubah lagi
+    let y = event.clientY-8; 
+    console.log("Coordinate x: " + x, "Coordinate y: " + y);
+    pos.push(x);
+    pos.push(y)
+    return(pos);
+} 
+
+canva.addEventListener('mousedown',(e) =>{
+    vec = getMousePosition(canva,e);
+    console.log(vec);
+
+    if (activate_line){
+        verticez.push(vec);
+        count_vec= count_vec+1;
+        if(count_vec ==2){
+            console.log(verticez);
+            setLine(verticez[0][0],verticez[0][1],verticez[1][0],verticez[1][1],1,1,0);
+            draw();
+            verticez=[];
+            count_vec = 0;
+        }
+    }
+
+    else if (activate_rect){
+        verticez.push(vec);
+        setRect(verticez[0][0],verticez[0][1],size_rect,1,1,0);
+        draw();
+        verticez=[];
+    }
+
+    else if (activate_polygon){
+        console.log('poligon bos');
+        verticez.push(vec);
+        count_vec= count_vec+1;
+        console.log(count_vec);
+        console.log(verticez);
+        if(count_vec == n_vec){
+            new_vert = verticez.flat();
+            console.log(new_vert);
+            var color = [1,1,0];
+            obj.push({
+                "mode" : gl.TRIANGLE_FAN,
+                "vertices" : new_vert,
+                "count" : count_vec,
+                "colors": color
+            })
+            draw();
+            verticez=[];
+            count_vec = 0;
+        }
+    }
+   
+})
+
+
+
+// main(moveLine(setLine(50,50,20,50,1,1,0),100),2,"line")
+
+// function moveLine(oldVertice, range){
+//     var newVertice=[];
+//     var x = range/2;
+    
+
+//     for(i=0; i<oldVertice.length; i++){
+//         if (i==0 || i ==1){
+//             newVertice.push(oldVertice[i]+range);
+//         }
+//         else{
+//             newVertice.push(oldVertice[i]);
+//         }
+//     }
+//     return newVertice;
+// }
+
+
