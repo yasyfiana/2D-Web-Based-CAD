@@ -136,8 +136,6 @@ function editObject(el) {
     var new_length_input = Number(prompt("Masukan panjang garis baru"),0);
     var new_x = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[0];
     var new_y = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[1];
-    shapeObj.vertices[2] = new_x;
-    shapeObj.vertices[3] = new_y;
 
     console.log( new_x );
     console.log( new_y );

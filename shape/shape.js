@@ -312,9 +312,29 @@ function newPointLine(x1,y1,x2,y2,new_length){
     var x_new = (-1 * b + Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a); 
     var y_new = y1 + m * (x_new - x1);
 
-    var hasil = [ x_new, y_new ]
+    var hasil = [ x_new, y_new ];
 
     return(hasil);
+}
+
+function newRect(x,y, new_rec_l){
+    var x1 = Number(x);
+    var x2 = Number(x) + Number(new_rec_l);
+    var y1 = Number(y);
+    var y2 = Number(y) + Number(new_rec_l);
+
+    // var hasil = []
+
+    var vertices=[
+        x1, y1,
+        x2, y1,
+        x1, y2,
+        x1, y2,
+        x2, y1,
+        x2, y2,
+    ]
+
+    return(vertices);
 }
 
 // main(moveLine(setLine(50,50,20,50,1,1,0),100),2,"line")
