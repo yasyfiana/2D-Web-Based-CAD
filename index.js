@@ -53,7 +53,7 @@ function addFields() {
         }
       })
       input.addEventListener('change', function (e) {
-        updateCoordinate(e)
+        updateCoordinate(e.target)
       })
       container.appendChild(input);
 
@@ -71,7 +71,7 @@ function addFields() {
         }
       })
       input.addEventListener('change', function (e) {
-        updateCoordinate(e)
+        updateCoordinate(e.target)
       })
       container.appendChild(input);
 
@@ -104,10 +104,10 @@ function updateColor() {
   coordinates.color = color;
 }
 
-function updateCoordinate(e) {
-  let axis = e.target.id.charAt(0)
-  let n = parseInt(e.target.id.substring(1))-1
-  let newVal = parseInt(e.target.value)
+function updateCoordinate(el) {
+  let axis = el.id.charAt(0)
+  let n = parseInt(el.id.substring(1))-1
+  let newVal = parseInt(el.value)
   coordinates[axis][n] = newVal
 }
 
@@ -173,6 +173,7 @@ function randomize() {
     coordinates.y[i] = Math.floor(Math.random() * MAX_Y_CANVAS)
     inputX[i].value = coordinates.x[i]
     inputY[i].value = coordinates.y[i]
+    
   }
   if (n === 2) {
     coordinates.mode = "Line"
@@ -190,8 +191,8 @@ function trackObjectUI(id, name) {
   li.innerHTML = `${name} Shape #${counter[name]}`;
   li.classList.add('object-item');
   li.addEventListener('click', function (e) {
+    resetCoordinates()
     let id = parseInt(e.target.id);
-    if (currentTarget)
     currentTarget.classList.remove('object-item-active');
     e.target.classList.add('object-item-active');
     currentTarget = e.target;
@@ -204,10 +205,13 @@ function trackObjectUI(id, name) {
     let inputX = document.getElementsByName('arrKoordinatX[]');
     let inputY = document.getElementsByName('arrKoordinatY[]');
     for (let i = 0; i < shapeObj.count; i++) {
-      inputX[i].value = shapeObj.vertices[i*2];
-      inputY[i].value = shapeObj.vertices[i*2+1];
+      inputX[i].value = shapeObj.vertices[i * 2];
+      inputY[i].value = shapeObj.vertices[i * 2 + 1];
+      updateCoordinate(inputX[i])
+      updateCoordinate(inputY[i])
     }
     document.getElementById('color').value = convertGlColor(shapeObj.colors);
+    updateColor()
 
     console.log('current target:')
     console.log(currentTarget)
