@@ -106,6 +106,9 @@ gl.vertexAttribPointer(
 gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
 
+
+
+
 function draw() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     var offset = 0;
@@ -167,19 +170,19 @@ function setLine(x1,y1,x2,y2,r,g,b){
 
 function setPolygon(verticex, n_vertices, r,g,b){
     // new_vert = verticex.flat();
-    var new_vert = [];
-    // console.log(new_vert);
+    // var new_vert = [];
+    // // console.log(new_vert);
     var color = [r,g,b];
-    for (i = 0; i < verticex.length; i++) {
-        new_vert.push(Number(verticex[i].x));
-        new_vert.push(Number(verticex[i].y));
-       // console.log(result[i]);
-      }
-    console.log(new_vert.flat());
+    // for (let i = 0; i < verticex.length; i++) {
+    //     new_vert.push(Number(verticex[i].x));
+    //     new_vert.push(Number(verticex[i].y));
+    //    // console.log(result[i]);
+    //   }
+    // console.log(new_vert.flat());
 
     obj.push({
         "mode" : gl.TRIANGLE_FAN,
-        "vertices" : new_vert.flat(),
+        "vertices" : verticex,
         "count" : n_vertices,
         "colors": color
     })
@@ -280,7 +283,23 @@ function render_polygon(v,n,r,g,b){
     draw();
 }
 
-
+var s_object = 
+{
+  id: "1",
+  type: "line",
+  n_vertics: "2",
+  colors:
+    {
+      R_color: "1",
+      G_color: "0",
+      B_color: "0"
+    },
+  vertices:
+    [
+      { x: "68", y: "68" },
+      { x: "400", y: "200" }
+    ]
+}
 
 // main(moveLine(setLine(50,50,20,50,1,1,0),100),2,"line")
 
