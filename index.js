@@ -7,6 +7,14 @@ let coordinates = {
   color: '#000000',
   mode: 'Polygon'
 };
+let trackedObjects = [];
+let currentTab = 1;
+let currentTarget = undefined;
+let counter = {
+  line: 0,
+  rect: 0,
+  polygon: 0
+}
 
 const MAX_Y_CANVAS = 600
 const MAX_X_CANVAS = 800
@@ -113,9 +121,17 @@ function convertColor(color) {
   return [r, g, b]
 }
 
-function flatten(coord) {
+function convertGlColor(colors) {
+  let [r, g, b] = colors;
+  let raw_r = r * 255;
+  let raw_g = g * 255;
+  let raw_b = b * 255;
+  return `#${raw_r.toString(16)}${raw_g.toString(16)}${raw_b.toString(16)}`;
+}
+
+function flatten(coord, n) {
   let flattened = [];
-  for (let i = 0; i < coordinates.n_vertices; i++) {
+  for (let i = 0; i < n; i++) {
     flattened.push(coord.x[i]);
     flattened.push(coord.y[i]);
   }
@@ -145,6 +161,7 @@ function randomize() {
   let n = parseInt(document.getElementById("jumlah").value);
   if (n < 2) {
     alert('Minimal harus ada 2 titik koordinat!')
+    return
   }
   let inputX = document.getElementsByName('arrKoordinatX[]');
   let inputY = document.getElementsByName('arrKoordinatY[]');
@@ -163,7 +180,39 @@ function randomize() {
     coordinates.mode = "Polygon"
   }
   render();
-  obj.pop();
+}
+
+function trackObjectUI(id, name) {
+  counter[name]++;
+  let container = document.getElementsByClassName("object-lists")[0];
+  let li = document.createElement('li');
+  li.id = id
+  li.innerHTML = `${name} Shape #${counter[name]}`;
+  li.classList.add('object-item');
+  li.addEventListener('click', function (e) {
+    let id = parseInt(e.target.id);
+    if (currentTarget)
+    currentTarget.classList.remove('object-item-active');
+    e.target.classList.add('object-item-active');
+    currentTarget = e.target;
+    let shapeObj = obj[id]
+    console.log(shapeObj);
+    
+    // Update fields
+    document.getElementById("jumlah").value = shapeObj.count;
+    addFields()
+    let inputX = document.getElementsByName('arrKoordinatX[]');
+    let inputY = document.getElementsByName('arrKoordinatY[]');
+    for (let i = 0; i < shapeObj.count; i++) {
+      inputX[i].value = shapeObj.vertices[i*2];
+      inputY[i].value = shapeObj.vertices[i*2+1];
+    }
+    document.getElementById('color').value = convertGlColor(shapeObj.colors);
+
+    console.log('current target:')
+    console.log(currentTarget)
+  })
+  container.appendChild(li);
 }
 
 function render() {
@@ -173,43 +222,40 @@ function render() {
   }
   if (!isAllPositiveNumber()) {
     alert('Ada koordinat yang tidak valid!')
+    return
   }
   if (coordinates.length < 2) {
     alert('Minimal harus ada 2 titik koordinat!')
+    return
   }
   console.log(coordinates)
+  let [r, g, b] = convertColor(coordinates.color)
   if (coordinates.mode === 'Line') {
-    let [r, g, b] = convertColor(coordinates.color)
-    setLine(
+    render_line(
       coordinates.x[0],
       coordinates.y[0],
       coordinates.x[1],
       coordinates.y[1],
       r, g, b
     )
-    draw()
   } else if (coordinates.mode === 'Rect') {
-    let [r, g, b] = convertColor(coordinates.color)
-    setRect(
+    render_rect(
       coordinates.x[0],
       coordinates.y[0],
       coordinates.size,
       r, g, b
     )
-    draw()
   } else if (coordinates.mode === 'Polygon') {
     // kalo bisa ada fungsi yg buat nyetel objectnya sih WKWK berasa menyusup kode orang
-    let shape = {
-      'mode': gl.TRIANGLE_FAN,
-      'vertices': flatten(coordinates),
-      'count': coordinates.n_vertices,
-      'colors': convertColor(coordinates.color)
-    };
-    obj.push(shape);
-    draw();
+    render_polygon(
+      flatten(coordinates, coordinates.n_vertices),
+      coordinates.n_vertices,
+      r, g, b
+    )
   }
 }
 
 // MAIN
 document.getElementById("jumlah").value = 0;
 updateColor()
+addFields()

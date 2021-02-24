@@ -106,6 +106,9 @@ gl.vertexAttribPointer(
 gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
 
+
+
+
 function draw() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     var offset = 0;
@@ -167,19 +170,19 @@ function setLine(x1,y1,x2,y2,r,g,b){
 
 function setPolygon(verticex, n_vertices, r,g,b){
     // new_vert = verticex.flat();
-    var new_vert = [];
-    // console.log(new_vert);
+    // var new_vert = [];
+    // // console.log(new_vert);
     var color = [r,g,b];
-    for (i = 0; i < verticex.length; i++) {
-        new_vert.push(Number(verticex[i].x));
-        new_vert.push(Number(verticex[i].y));
-       // console.log(result[i]);
-      }
-    console.log(new_vert.flat());
+    // for (let i = 0; i < verticex.length; i++) {
+    //     new_vert.push(Number(verticex[i].x));
+    //     new_vert.push(Number(verticex[i].y));
+    //    // console.log(result[i]);
+    //   }
+    // console.log(new_vert.flat());
 
     obj.push({
         "mode" : gl.TRIANGLE_FAN,
-        "vertices" : new_vert.flat(),
+        "vertices" : verticex,
         "count" : n_vertices,
         "colors": color
     })
@@ -227,8 +230,7 @@ canva.addEventListener('mousedown',(e) =>{
         count_vec= count_vec+1;
         if(count_vec ==2){
             console.log(verticez);
-            setLine(verticez[0][0],verticez[0][1],verticez[1][0],verticez[1][1],1,1,0);
-            draw();
+            render_line(verticez[0][0],verticez[0][1],verticez[1][0],verticez[1][1],1,1,0);
             verticez=[];
             count_vec = 0;
         }
@@ -236,8 +238,7 @@ canva.addEventListener('mousedown',(e) =>{
 
     else if (activate_rect){
         verticez.push(vec);
-        setRect(verticez[0][0],verticez[0][1],size_rect,1,1,0);
-        draw();
+        render_rect(verticez[0][0],verticez[0][1],size_rect,1,1,0);
         console.log(size_rect);
         verticez=[];
     }
@@ -248,17 +249,22 @@ canva.addEventListener('mousedown',(e) =>{
         count_vec= count_vec+1;
         console.log(count_vec);
         console.log(verticez);
-        if(count_vec == n_vec){
+        if (count_vec == n_vec) {
             new_vert = verticez.flat();
-            console.log(new_vert);
-            var color = [1,1,0];
-            obj.push({
-                "mode" : gl.TRIANGLE_FAN,
-                "vertices" : new_vert,
-                "count" : count_vec,
-                "colors": color
-            })
-            draw();
+            render_polygon(
+                new_vert,
+                count_vec,
+                1, 1, 0
+            )
+            // console.log(new_vert);
+            // var color = [1,1,0];
+            // obj.push({
+            //     "mode" : gl.TRIANGLE_FAN,
+            //     "vertices" : new_vert,
+            //     "count" : count_vec,
+            //     "colors": color
+            // })
+            // draw();
             verticez=[];
             count_vec = 0;
         }
@@ -267,20 +273,39 @@ canva.addEventListener('mousedown',(e) =>{
 })
 
 function render_line(x1,y1,x2,y2,r,g,b){
-    setLine(x1,y1,x2,y2,r,g,b);
+    setLine(x1, y1, x2, y2, r, g, b);
+    trackObjectUI(obj.length-1, 'line');
     draw();
 }
 
 function render_rect(x,y,size,r,g,b){
-    setRect(x,y,size,r,g,b);
+    setRect(x, y, size, r, g, b);
+    trackObjectUI(obj.length-1, 'rect');
     draw();
 }
 function render_polygon(v,n,r,g,b){
-    setPolygon(v,n,r,g,b);
+    setPolygon(v, n, r, g, b);
+    trackObjectUI(obj.length-1, 'polygon');
     draw();
 }
 
-
+var s_object = 
+{
+  id: "1",
+  type: "line",
+  n_vertics: "2",
+  colors:
+    {
+      R_color: "1",
+      G_color: "0",
+      B_color: "0"
+    },
+  vertices:
+    [
+      { x: "68", y: "68" },
+      { x: "400", y: "200" }
+    ]
+}
 
 // main(moveLine(setLine(50,50,20,50,1,1,0),100),2,"line")
 

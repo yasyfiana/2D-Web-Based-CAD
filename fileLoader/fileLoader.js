@@ -3,22 +3,41 @@ var shape = {
 
 }
 
+// function reder_obj(obj){
+//   if(obj.type == "line"){
+//     render_line(obj.vertices[0].x, obj.vertices[0].y, obj.vertices[1].x, obj.vertices[1].x, obj.colors.R_color, obj.colors.G_color, obj.colors.B_color);
+//     console.log("halo");
+//   }
+//   else if (obj.type == "rect"){
+//     console.log(obj.size  + " ini rect");
+//     render_rect(obj.vertices[0].x, obj.vertices[0].y, Number(obj.size), obj.colors.R_color, obj.colors.G_color, obj.colors.B_color)
+//   }
+//   else if (obj.type == "polygon"){
+    
+//     render_polygon(obj.vertices, Number(obj.n_vertics), obj.colors.R_color, obj.colors.G_color, obj.colors.B_color );
+//     console.log("ini polpol");
+//     // console.log(x);
+//   }
+// }
+
 function reder_obj(obj){
-  if(obj.type == "line"){
-    render_line(obj.vertices[0].x, obj.vertices[0].y, obj.vertices[1].x, obj.vertices[1].x, obj.colors.R_color, obj.colors.G_color, obj.colors.B_color);
+  if(obj.mode == "1"){
+    render_line(obj.vertices[0], obj.vertices[1], obj.vertices[2], obj.vertices[3], obj.colors[0], obj.colors[1], obj.colors[2]);
     console.log("halo");
   }
-  else if (obj.type == "rect"){
-    var a = parseInt(obj.vertices[0].x) - parseInt(obj.vertices[1].x);
-    var b = parseInt(obj.vertices[0].y)- parseInt(obj.vertices[1].y);
+  else if (obj.mode == "4"){
+
+    var a = parseInt(obj.vertices[0]) - parseInt(obj.vertices[2]);
+    var b = parseInt(obj.vertices[1])- parseInt(obj.vertices[3]);
 
     var c = Math.sqrt( a*a + b*b );
-    console.log(parseInt(c));
-    render_rect(obj.vertices[0].x, obj.vertices[0].y, parseInt(c), obj.colors.R_color, obj.colors.G_color, obj.colors.B_color)
+
+    console.log(obj.size  + " ini rect");
+    render_rect(obj.vertices[0], obj.vertices[1], Number(c), obj.colors[0], obj.colors[1], obj.colors[2])
   }
-  else if (obj.type == "polygon"){
+  else if (obj.mode == "6"){
     
-    render_polygon(obj.vertices, Number(obj.n_vertics), obj.colors.R_color, obj.colors.G_color, obj.colors.B_color );
+    render_polygon(obj.vertices, Number(obj.count), obj.colors[0], obj.colors[1], obj.colors[2]);
     console.log("ini polpol");
     // console.log(x);
   }
@@ -41,6 +60,8 @@ function reder_obj(obj){
 //       { "x": "1.0", "y": "2.0" }
 //     ]
 // }
+var all_obj = [];
+
 
 function uploadFile() {
   // document.getElementById('import').onclick = function() {
@@ -56,15 +77,15 @@ function uploadFile() {
   //   console.log(e);
       var result = JSON.parse(e.target.result);
       var formatted = JSON.stringify(result, null, 2);
-    	document.getElementById('result').value = formatted;
+    	// document.getElementById('result').value = formatted;
       // console.log(result[0].vertices[0].x);
-      
+      all_obj = result;
       shape = result;
       // console.log(shape[1].vertices[0].x);
       //CALL THE RENDER FUNCTION
-      for (i = 0; i < result.length; i++) {
+      for (let i = 0; i < result.length; i++) {
         reder_obj(result[i]);
-        // console.log(result[i]);
+        console.log(result.length);
       }
     }
 
@@ -83,6 +104,7 @@ function download(content, fileName, contentType) {
 }
 
 function test(){
- download( JSON.stringify(shape), 'halo.json', 'text/plain"');
+ all_obj.push(s_object);
+ download( JSON.stringify(obj), 'halo.json', 'text/plain"');
  
 }
