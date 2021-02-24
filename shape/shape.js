@@ -192,6 +192,7 @@ function clear_canv(){ //belom bisa gatau knp wkwk
     console.log("masuk paeko");
     obj = [];
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    clearObjectUI();
     // obj.push({
     //     "mode" : gl.POINTS,
     //     "vertices" : [0,0],

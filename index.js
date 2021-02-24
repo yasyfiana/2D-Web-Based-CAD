@@ -149,9 +149,9 @@ function convertColor(color) {
 
 function convertGlColor(colors) {
   let [r, g, b] = colors;
-  let raw_r = r * 255;
-  let raw_g = g * 255;
-  let raw_b = b * 255;
+  let raw_r = Math.floor(r * 255);
+  let raw_g = Math.floor(g * 255);
+  let raw_b = Math.floor(b * 255);
   console.log(`#${raw_r.toString(16)}${raw_g.toString(16)}${raw_b.toString(16)}`);
   return `#${raw_r.toString(16)}${raw_g.toString(16)}${raw_b.toString(16)}`;
 }
@@ -212,14 +212,25 @@ function randomize() {
     coordinates.y[i] = Math.floor(Math.random() * MAX_Y_CANVAS)
     inputX[i].value = coordinates.x[i]
     inputY[i].value = coordinates.y[i]
-    
   }
+  document.getElementById('color').value = convertGlColor([Math.random(), Math.random(), Math.random()]);
+  updateColor();
+
   if (n === 2) {
     coordinates.mode = "Line"
   } else {
     coordinates.mode = "Polygon"
   }
   render();
+}
+
+function clearObjectUI() {
+  reset()
+  let container = document.getElementsByClassName("object-lists")[0];
+  while (container.hasChildNodes()) {
+    container.removeChild(container.lastChild);
+  }
+
 }
 
 function trackObjectUI(id, name) {
