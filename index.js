@@ -145,6 +145,9 @@ function updateColor() {
   let textNode = document.getElementsByClassName('color-code')[0].getElementsByTagName('span')[0];
   textNode.innerHTML = color;
   coordinates.color = color;
+  if (coordinates.mode === 'Edit') {
+    render();
+  }
 }
 
 function updateCoordinate(el) {
@@ -309,10 +312,13 @@ function render() {
       r, g, b
     )
   } else if (coordinates.mode === 'Edit') {
+    //update vertices
     for (let i = 0; i < coordinates.n_vertices; i++){
       obj[currentTarget.id].vertices[i*2] = coordinates.x[i]
       obj[currentTarget.id].vertices[i*2+1] = coordinates.y[i]
     }
+    //update color
+    obj[currentTarget.id].colors = convertColor(coordinates.color);
     draw();
   }
 }
