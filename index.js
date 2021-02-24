@@ -193,7 +193,8 @@ function trackObjectUI(id, name) {
   li.addEventListener('click', function (e) {
     resetCoordinates()
     let id = parseInt(e.target.id);
-    currentTarget.classList.remove('object-item-active');
+    if (currentTarget)
+      currentTarget.classList.remove('object-item-active');
     e.target.classList.add('object-item-active');
     currentTarget = e.target;
     let shapeObj = obj[id]
