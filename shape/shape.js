@@ -120,10 +120,10 @@ function draw() {
 
 
 function setRect(x,y,size,r,g,b){
-    var x1 = x;
-    var x2 = x + size;
-    var y1 = y;
-    var y2 = y + size;
+    var x1 = Number(x);
+    var x2 = Number(x) + Number(size);
+    var y1 = Number(y);
+    var y2 = Number(y) + Number(size);
     var vertices=[
         x1, y1,
         x2, y1,
@@ -136,6 +136,7 @@ function setRect(x,y,size,r,g,b){
     var color=[
         r,g,b,
     ]
+    console.log(vertices);
 
     obj.push({
         "mode" : gl.TRIANGLES,
@@ -149,6 +150,7 @@ function setLine(x1,y1,x2,y2,r,g,b){
         x1,y1,
         x2,y2,
     ]
+    console.log(line + "iyaaaa");
 
     var color=[
         r,g,b,
@@ -160,6 +162,26 @@ function setLine(x1,y1,x2,y2,r,g,b){
         "count" : 2,
         "colors": color
 
+    })
+}
+
+function setPolygon(verticex, n_vertices, r,g,b){
+    // new_vert = verticex.flat();
+    var new_vert = [];
+    // console.log(new_vert);
+    var color = [r,g,b];
+    for (i = 0; i < verticex.length; i++) {
+        new_vert.push(Number(verticex[i].x));
+        new_vert.push(Number(verticex[i].y));
+       // console.log(result[i]);
+      }
+    console.log(new_vert.flat());
+
+    obj.push({
+        "mode" : gl.TRIANGLE_FAN,
+        "vertices" : new_vert.flat(),
+        "count" : n_vertices,
+        "colors": color
     })
 }
 
@@ -216,6 +238,7 @@ canva.addEventListener('mousedown',(e) =>{
         verticez.push(vec);
         setRect(verticez[0][0],verticez[0][1],size_rect,1,1,0);
         draw();
+        console.log(size_rect);
         verticez=[];
     }
 
@@ -242,6 +265,20 @@ canva.addEventListener('mousedown',(e) =>{
     }
    
 })
+
+function render_line(x1,y1,x2,y2,r,g,b){
+    setLine(x1,y1,x2,y2,r,g,b);
+    draw();
+}
+
+function render_rect(x,y,size,r,g,b){
+    setRect(x,y,size,r,g,b);
+    draw();
+}
+function render_polygon(v,n,r,g,b){
+    setPolygon(v,n,r,g,b);
+    draw();
+}
 
 
 
