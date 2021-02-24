@@ -164,7 +164,7 @@ function setLine(x1,y1,x2,y2,r,g,b){
 }
 
 function clear(){ //belom bisa gatau knp wkwk
-    obj =[];
+    obj = [];
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
@@ -188,8 +188,8 @@ var new_vert=[];
 
 function getMousePosition(canvas, event) { 
     let pos = []; 
-    let x = event.clientX-8;  //8 tuh jarak putih ke canvas !!nanti perlu diubah lagi
-    let y = event.clientY-8; 
+    let x = event.clientX;  //8 tuh jarak putih ke canvas !!nanti perlu diubah lagi
+    let y = event.clientY; 
     console.log("Coordinate x: " + x, "Coordinate y: " + y);
     pos.push(x);
     pos.push(y)

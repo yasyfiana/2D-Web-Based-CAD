@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<title>tubles</title>
+    <link rel="stylesheet" href="style/main.css">
+	</head>
+	<body >
+    <div class="main-container">
+      <div class="canvas-container">
+        <canvas id="cnvs" width="800" height="600"></canvas>
+        <div class="objects-container">
+          <ul class="object-lists">
+            <li>Object 1</li>
+            <li>Object 2</li>
+          </ul>
+        </div>
+      </div>
+      <div class="config-container">
+        <div class="top-button-container">
+          <button class="top-button" onclick="line_button()">Line</button>
+          <button class="top-button" onclick="rect_button()">Rectangle(square)</button>
+          <button class="top-button" onclick="polygon_button()">Polygon</button>
+          <button class="top-button" onclick="clear()">Clear Canvas</button>
+        </div>
+        <h1>Configuration Panel</h1>
+        <div class="config-panel">
+          <div class="input-container">
+            <div class="label">Jumlah Vertices:</div>
+            <input type="number" name="jumlah" id="jumlah" oninput="addFields()" value="0" min="0">
+            <div>Koordinat:</div>
+            <div class="koor-container"></div>
+            <button onclick="render()" class="btn">Render!</button>
+            <button onclick="randomize()" class="btn">Randomize!</button>
+          </div>
+          <div class="color-picker">
+            <input type="color" name="color" id="color" oninput="updateColor()" onclick="updateColor()">
+            <div class="color-code">Color code: <span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+		<script src="shape/shape.js"></script>
+		<script src="shape/button.js"></script>
+    <script src="index.js"></script>
+	</body>
+</html>
