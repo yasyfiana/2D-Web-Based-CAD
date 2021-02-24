@@ -307,7 +307,7 @@ function newPointLine(x1, y1, x2, y2, new_length) {
     
     a = 1;
     b = -2 * x1 + m;
-    c = Math.pow(x1, 2) + (-1 * m * x1) + y1 - new_length;
+    c = Math.pow(x1, 2) + (-1 * m * x1) + y1 - Math.pow(new_length, 2);
 
     var x_new = (-1 * b + Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a); 
     var y_new = y1 + m * (x_new - x1);

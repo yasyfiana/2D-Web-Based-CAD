@@ -166,10 +166,12 @@ function editObject(el) {
     })
     s_container.appendChild(s_input)
   }
-  let size = calculateSize(shapeObj.count, shapeObj.vertices)
-  let s_input = document.getElementById('size');
-  s_input.value = Math.floor(size);
-  coordinates.size = Math.floor(size);
+  if (shapeObj.count === 2 || isTriangularRect(shapeObj.count, shapeObj.vertices)) {
+    let size = calculateSize(shapeObj.count, shapeObj.vertices)
+    let s_input = document.getElementById('size');
+    s_input.value = Math.floor(size);
+    coordinates.size = Math.floor(size);
+  }
 
   // if(shapeObj.count === 2 || (shapeObj.count === 4)){
   //   addFields();
