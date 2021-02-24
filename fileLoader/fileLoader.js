@@ -104,7 +104,7 @@ function download(content, fileName, contentType) {
 }
 
 function test(){
- all_obj.push(s_object);
+ console.log(newPointLine(1,0.5,3.5,2,17));
  download( JSON.stringify(obj), 'halo.json', 'text/plain"');
  
 }

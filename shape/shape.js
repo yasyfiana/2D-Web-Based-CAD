@@ -289,22 +289,23 @@ function render_polygon(v,n,r,g,b){
     draw();
 }
 
-var s_object = 
-{
-  id: "1",
-  type: "line",
-  n_vertics: "2",
-  colors:
-    {
-      R_color: "1",
-      G_color: "0",
-      B_color: "0"
-    },
-  vertices:
-    [
-      { x: "68", y: "68" },
-      { x: "400", y: "200" }
-    ]
+function newPointLine(x1,y1,x2,y2,new_length){
+    var a = 0;
+    var b = 0;
+    var c = 0;
+
+    var m = (y2-y1)/(x2-x1);
+    
+    a = 1;
+    b = -2 * x1;
+    c = x1 - (new_length /(1+ (m*m)));
+
+    var x_new = (-1 * b + Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a); 
+    var y_new = y1 + m * (x_new - x1);
+
+    var hasil = [ x_new, y_new ]
+
+    return(hasil);
 }
 
 // main(moveLine(setLine(50,50,20,50,1,1,0),100),2,"line")
