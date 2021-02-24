@@ -397,11 +397,14 @@ function carititik(x_mouse, y_mouse){
 }
 
 
-function jarak(x1,y1,x2,y2){
+function jarak(x1, y1, x2, y2) {
     var a = parseInt(x1) - parseInt(x2);
-    var b = parseInt(y1)- parseInt(y2);
+    var b = parseInt(y1) - parseInt(y2);
 
-    return (Math.sqrt( a*a + b*b ));
+    return (Math.sqrt(a * a + b * b));
+    
+}
+
 function calculateSize(n, vertices) {
     if (n === 2) {
         return Math.sqrt(Math.pow(vertices[2] - vertices[0], 2) + Math.pow(vertices[3] - vertices[1], 2));

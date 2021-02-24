@@ -202,7 +202,11 @@ function updateSize(el) {
   if (isTriangularRect(coordinates.n_vertices, flatten(coordinates, coordinates.n_vertices))) {
     newCoord = newRect(coordinates.x[0], coordinates.y[0], coordinates.size);
   } else {
-    newCoord = newPointLine(coordinates.x[0], coordinates.y[0], coordinates.x[1], coordinates.y[1], coordinates.size);
+    if (coordinates.x[0] < coordinates.x[1]) {
+      newCoord = newPointLine(coordinates.x[0], coordinates.y[0], coordinates.x[1], coordinates.y[1], coordinates.size);
+    } else {
+      newCoord = newPointLine(coordinates.x[1], coordinates.y[1], coordinates.x[0], coordinates.y[0], coordinates.size);
+    }
   }
   console.log(newCoord)
   console.log(coordinates)
