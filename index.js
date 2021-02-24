@@ -26,7 +26,7 @@ function resetCoordinates() {
     n_vertices: 0,
     size: 0,
     color: '#000000',
-    mode: ''
+    mode: 'Polygon'
   } 
 }
 
@@ -104,6 +104,23 @@ function addFields() {
       coordinates.x.pop();
       coordinates.y.pop();
       i++;
+    }
+  }
+  // Add special input: length (line) && size (rect)
+
+  if (number === 2 || (number === 4)) {
+    let s_container = document.getElementsByClassName('special-input')[0];
+    s_container.appendChild(document.createTextNode("Size/Length: "))
+    let s_input = document.createElement("input");
+    s_input.type = "number";
+    s_input.name = "size";
+    s_input.id = "size";
+    s_input.min = 0;
+    s_container.appendChild(s_input)
+  } else {
+    let s_container = document.getElementsByClassName('special-input')[0];
+    while (s_container.hasChildNodes()) {
+      s_container.removeChild(s_container.lastChild)
     }
   }
 }
@@ -223,7 +240,7 @@ function reset() {
   if (currentTarget) {
     currentTarget.classList.remove('object-item-active');
   }
-  currentTarget = undefined
+  currentTarget = undefined;
   toggleEditMode(false);
 }
 
