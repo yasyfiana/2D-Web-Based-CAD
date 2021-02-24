@@ -188,9 +188,17 @@ function setPolygon(verticex, n_vertices, r,g,b){
     })
 }
 
-function clear(){ //belom bisa gatau knp wkwk
+function clear_canv(){ //belom bisa gatau knp wkwk
+    console.log("masuk paeko");
     obj = [];
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // obj.push({
+    //     "mode" : gl.POINTS,
+    //     "vertices" : [0,0],
+    //     "count" : 1,
+    //     "colors" : [0,0,0]
+    // })
+    // draw();
 }
 
 /// MAIN
