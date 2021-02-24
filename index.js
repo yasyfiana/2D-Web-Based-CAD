@@ -30,6 +30,18 @@ function resetCoordinates() {
   } 
 }
 
+function toggleEditMode(bool) {
+  if (bool) {
+    document.getElementById('jumlah').readOnly = true;
+    document.getElementById('render').innerHTML = 'Update!';
+    document.getElementById('randomize').style.display = 'none';
+  } else {
+    document.getElementById('jumlah').readOnly = false;
+    document.getElementById('render').innerHTML = 'Render!';
+    document.getElementById('randomize').style.display = 'block';
+  }
+}
+
 function addFields() {
   let number = parseInt(document.getElementById("jumlah").value);
   coordinates.n_vertices = number;
@@ -94,7 +106,6 @@ function addFields() {
       i++;
     }
   }
-  console.log(coordinates)
 }
 
 function editObject(el) {
@@ -106,7 +117,6 @@ function editObject(el) {
   el.classList.add('object-item-active');
   currentTarget = el;
   let shapeObj = obj[id]
-  console.log(shapeObj);
   
   // Update fields
   document.getElementById("jumlah").value = shapeObj.count;
@@ -120,7 +130,14 @@ function editObject(el) {
     updateCoordinate(inputY[i])
   }
   document.getElementById('color').value = convertGlColor(shapeObj.colors);
+  console.log(convertGlColor(shapeObj.colors));
   updateColor()
+  console.log(document.getElementById('color').value)
+
+  coordinates.mode = 'Edit'
+  toggleEditMode(true);
+  console.log('Coordinates:')
+  console.log(coordinates)
 }
 
 function updateColor() {
@@ -135,6 +152,9 @@ function updateCoordinate(el) {
   let n = parseInt(el.id.substring(1))-1
   let newVal = parseInt(el.value)
   coordinates[axis][n] = newVal
+  if (coordinates.mode === 'Edit') {
+    render()
+  }
 }
 
 function convertColor(color) {
@@ -152,8 +172,16 @@ function convertGlColor(colors) {
   let raw_r = Math.floor(r * 255);
   let raw_g = Math.floor(g * 255);
   let raw_b = Math.floor(b * 255);
-  console.log(`#${raw_r.toString(16)}${raw_g.toString(16)}${raw_b.toString(16)}`);
-  return `#${raw_r.toString(16)}${raw_g.toString(16)}${raw_b.toString(16)}`;
+  console.log(`#${padHexString(raw_r)}${padHexString(raw_g)}${padHexString(raw_b)}`);
+  return `#${padHexString(raw_r)}${padHexString(raw_g)}${padHexString(raw_b)}`;
+}
+
+function padHexString(raw_color) {
+  if (raw_color <= 16) {
+    return `0${raw_color.toString(16)}`;
+  } else {
+    return `${raw_color.toString(16)}`
+  }
 }
 
 function flatten(coord, n) {
@@ -168,7 +196,6 @@ function flatten(coord, n) {
 function isAnyNull() {
   for (let i = 0; i < coordinates.n_vertices; i++) {
     if (coordinates.x[i] === null || coordinates.y[i] === null) {
-      console.log(`${coordinates.x[i]} || ${coordinates.y[i]}`)
       return true
     }
   }
@@ -194,6 +221,7 @@ function reset() {
     currentTarget.classList.remove('object-item-active');
   }
   currentTarget = undefined
+  toggleEditMode(false);
 }
 
 function randomize() {
@@ -204,8 +232,6 @@ function randomize() {
   }
   let inputX = document.getElementsByName('arrKoordinatX[]');
   let inputY = document.getElementsByName('arrKoordinatY[]');
-  console.log(inputX)
-  console.log(inputY)
 
   for (let i = 0; i < n; i++){
     coordinates.x[i] = Math.floor(Math.random() * MAX_X_CANVAS)
@@ -277,12 +303,17 @@ function render() {
       r, g, b
     )
   } else if (coordinates.mode === 'Polygon') {
-    // kalo bisa ada fungsi yg buat nyetel objectnya sih WKWK berasa menyusup kode orang
     render_polygon(
       flatten(coordinates, coordinates.n_vertices),
       coordinates.n_vertices,
       r, g, b
     )
+  } else if (coordinates.mode === 'Edit') {
+    for (let i = 0; i < coordinates.n_vertices; i++){
+      obj[currentTarget.id].vertices[i*2] = coordinates.x[i]
+      obj[currentTarget.id].vertices[i*2+1] = coordinates.y[i]
+    }
+    draw();
   }
 }
 
