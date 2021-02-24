@@ -134,6 +134,7 @@ function editObject(el) {
   el.classList.add('object-item-active');
   currentTarget = el;
   let shapeObj = obj[id]
+
   
   // Update fields
   document.getElementById("jumlah").value = shapeObj.count;
@@ -145,6 +146,17 @@ function editObject(el) {
     inputY[i].value = shapeObj.vertices[i * 2 + 1];
     updateCoordinate(inputX[i])
     updateCoordinate(inputY[i])
+  }
+
+  if(parseInt(shapeObj.mode) === 1){
+    addFields();
+    var new_length_input = Number(prompt("Masukan panjang garis baru"),0);
+    var new_x = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[0];
+    var new_y = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[1];
+
+    console.log( new_x );
+    console.log( new_y );
+
   }
   document.getElementById('color').value = convertGlColor(shapeObj.colors);
   console.log(convertGlColor(shapeObj.colors));
