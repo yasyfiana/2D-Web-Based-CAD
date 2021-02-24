@@ -48,6 +48,11 @@
   border-color: rgb(255, 255, 165);
 }
 
+.top-button.active {
+  background-color: yellow;
+  border-color: rgb(255, 255, 165);
+}
+
 .config-panel {
   height: 100%;
   width: 80%;

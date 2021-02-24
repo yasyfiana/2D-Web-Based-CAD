@@ -1,9 +1,9 @@
 # 2D-Web-Based-CAD
 
-### Bagi tugas:
-1. Inisialisasi Webgl (buat function2 utk line, persegi & polygon)  
--> devin
-2. Upload & Save data (kemungkinan pake localStorage, abis upload clear canvas)  
--> afi
-3. Inisialisasi input2an (input box sesuai spek dan sesuai objek yg dibuat)  
--> faris
+### Anggota
+13518116 Valentinus Devin S.
+13518125 Faris Rizki E.
+13518143 Yasyfiana F.P.
+
+Link Docs:
+https://docs.google.com/document/d/1dzSUPUwLWt2BO-Jhwj6TS1G5m6fW4tV2K8V1bIKBrfY/edit?usp=sharing

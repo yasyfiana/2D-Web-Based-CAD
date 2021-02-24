@@ -219,6 +219,10 @@ var canva = document.querySelector('#cnvs');
 var count_vec=0;
 var verticez=[];
 var new_vert=[];
+var isDragging = false;
+var startDragging = [undefined, undefined]
+var transformed = [0, 0]
+var pointClicked = undefined
 
 function getMousePosition(canvas, event) { 
     let pos = []; 
@@ -232,7 +236,6 @@ function getMousePosition(canvas, event) {
 
 canva.addEventListener('mousedown',(e) =>{
     vec = getMousePosition(canva,e);
-    console.log(vec);
 
     if (activate_line){
         verticez.push(vec);
@@ -278,7 +281,52 @@ canva.addEventListener('mousedown',(e) =>{
             count_vec = 0;
         }
     }
+    else {
+        let x = carititik(vec[0], vec[1])
+        if (typeof x === 'undefined') {
+            return
+        }
+        isDragging = true;
+        startDragging = vec
+        pointClicked = x
+    }
    
+})
+
+canva.addEventListener('mousemove', function(e) {
+    if (isDragging) {
+        vec = getMousePosition(canva,e);
+
+        let [idx_obj, jarak, idx_vert] = pointClicked;
+        console.log('point clicked:')
+        console.log(`${idx_obj}|${jarak}`)
+        console.log(idx_vert)
+        console.log(`object:`)
+        console.log(obj[idx_obj])
+        let targetDisplacementX = vec[0] - startDragging[0] - transformed[0]
+        let targetDisplacementY = vec[1] - startDragging[1] - transformed[1]
+        transformed[0] += targetDisplacementX
+        transformed[1] += targetDisplacementY
+        console.log(`target displacement: ${targetDisplacementX}, ${targetDisplacementY}`)
+        for (let i = 0; i < idx_vert.length; i++) {
+            obj[idx_obj].vertices[idx_vert[i]*2] += targetDisplacementX
+            obj[idx_obj].vertices[idx_vert[i]*2 + 1] += targetDisplacementY
+        }
+        console.log(`object after:`)
+        console.log(obj[idx_obj])
+        draw();
+    }
+})
+
+canva.addEventListener('mouseup', e => {
+    vec = getMousePosition(canva,e);
+
+    if (isDragging) {
+        isDragging = false;
+        startDragging = [undefined, undefined]
+        transformed = [0, 0]
+        pointClicked = undefined;
+    }
 })
 
 function render_line(x1,y1,x2,y2,r,g,b){
@@ -339,60 +387,52 @@ function newRect(x,y, new_rec_l){
 function carititik(x_mouse, y_mouse){
 
     // Cari titik terdekat
-    var number_obj;
-    var nilai_obj;
-    var indeks_vertics;
-    
+    var number_obj = -1;
+    var nilai_obj = 99999;
+    var indeks_obj = [0];
+
+    const RADIUS = 20;
+
     for (var i = (obj.length - 1); i >= 0; i--) {
-        var jarakTitik = 0;
         var ver = obj[i].vertices;
-        console.log(ver);
-        var indeks_obj = 0;
-        if(obj.mode == "1"){
-            let jsatu = jarak(ver[0],ver[1], x_mouse, y_mouse);
-            let jdua = jarak(ver[2],ver[3], x_mouse, y_mouse)
-
-            if(jsatu <= jdua){
-                jarakTitik = jsatu;
-                indeks_obj = 0;
-            }else{
-                jarakTitik = jdua;
-                indeks_obj = 2;
-            }
-            
-        }
-        // else if(obj.mode == "4") {
-        //     for(var j = 0 ; j < (ver.length/2); j+=2){
-        //         if (pol_sem > jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem){
-        //             pol_sem = jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem;
-        //             indeks_obj = i;
-        //         }
-        //     }
-
-        // }
-        else if(obj.mode == "6") {
-            var pol_sem = 0
-
-            for(var j = 0 ; j < (ver.length/2); j+=2){
-                if (pol_sem > jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem){
-                    pol_sem = jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem;
-                    indeks_obj = i;
+        // console.log(typeof obj[i].mode)
+        // console.log(obj[i].mode)
+        if (obj[i].mode === 4) {
+            for (let j = 0; j < (ver.length) / 2; j++){
+                console.log(`obj yang ke ${i}`)
+                console.log(obj[i])
+                console.log(`jarak: ${jarak(ver[j*2], ver[j*2 + 1], x_mouse, y_mouse)}`)
+                console.log(`j: ${j} | verX = ${ver[j*2]} verY = ${ver[j*2+1]}`)
+                if (jarak(ver[j*2], ver[j*2 + 1], x_mouse, y_mouse) < nilai_obj) {
+                    nilai_obj = jarak(ver[j*2], ver[j*2 + 1], x_mouse, y_mouse);
+                    indeks_obj = [j];
+                    number_obj = i;
                 }
             }
-
-            jarakTitik = pol_sem;
+            console.log('indeksobj:')
+            console.log(indeks_obj)
+            if (indeks_obj == 2 || indeks_obj == 3){ indeks_obj = [2, 3]}
+            else if (indeks_obj == 1 || indeks_obj == 4) { indeks_obj = [1, 4] }
+            else {indeks_obj = [indeks_obj]}
+        } else {
+            for (let j = 0; j < (ver.length) / 2; j++){
+                // console.log(`obj yang ke ${i}`)
+                // console.log(obj[i])
+                // console.log(`jarak: ${jarak(ver[j*2], ver[j*2 + 1], x_mouse, y_mouse)}`)
+                // console.log(`j: ${j} | verX = ${ver[j*2]} verY = ${ver[j*2+1]}`)
+                if (jarak(ver[j*2], ver[j*2 + 1], x_mouse, y_mouse) < nilai_obj) {
+                    nilai_obj = jarak(ver[j*2], ver[j*2 + 1], x_mouse, y_mouse);
+                    indeks_obj = [j];
+                    number_obj = i;
+                }
+            }
         }
-
-        if(jarakTitik < nilai_obj){
-            nilai_obj = jarakTitik;
-            number_obj = i;
-            indeks_vertics = indeks_obj;
-        }
-
-
     }
 
-    return(number_obj,nilai_obj,indeks_obj);
+    if (nilai_obj > RADIUS) {
+        return undefined
+    }
+    return [number_obj,nilai_obj,indeks_obj];
 
 }
 
