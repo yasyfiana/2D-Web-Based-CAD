@@ -333,10 +333,75 @@ function newRect(x,y, new_rec_l){
         x2, y1,
         x2, y2,
     ]
-
     return(vertices);
 }
 
+function carititik(x_mouse, y_mouse){
+
+    // Cari titik terdekat
+    var number_obj;
+    var nilai_obj;
+    var indeks_vertics;
+    
+    for (var i = (obj.length - 1); i >= 0; i--) {
+        var jarakTitik = 0;
+        var ver = obj[i].vertices;
+        console.log(ver);
+        var indeks_obj = 0;
+        if(obj.mode == "1"){
+            let jsatu = jarak(ver[0],ver[1], x_mouse, y_mouse);
+            let jdua = jarak(ver[2],ver[3], x_mouse, y_mouse)
+
+            if(jsatu <= jdua){
+                jarakTitik = jsatu;
+                indeks_obj = 0;
+            }else{
+                jarakTitik = jdua;
+                indeks_obj = 2;
+            }
+            
+        }
+        // else if(obj.mode == "4") {
+        //     for(var j = 0 ; j < (ver.length/2); j+=2){
+        //         if (pol_sem > jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem){
+        //             pol_sem = jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem;
+        //             indeks_obj = i;
+        //         }
+        //     }
+
+        // }
+        else if(obj.mode == "6") {
+            var pol_sem = 0
+
+            for(var j = 0 ; j < (ver.length/2); j+=2){
+                if (pol_sem > jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem){
+                    pol_sem = jarak(ver[j],ver[j+1], x_mouse, y_mouse), pol_sem;
+                    indeks_obj = i;
+                }
+            }
+
+            jarakTitik = pol_sem;
+        }
+
+        if(jarakTitik < nilai_obj){
+            nilai_obj = jarakTitik;
+            number_obj = i;
+            indeks_vertics = indeks_obj;
+        }
+
+
+    }
+
+    return(number_obj,nilai_obj,indeks_obj);
+
+}
+
+
+function jarak(x1,y1,x2,y2){
+    var a = parseInt(x1) - parseInt(x2);
+    var b = parseInt(y1)- parseInt(y2);
+
+    return (Math.sqrt( a*a + b*b ));
 function calculateSize(n, vertices) {
     if (n === 2) {
         return Math.sqrt(Math.pow(vertices[2] - vertices[0], 2) + Math.pow(vertices[3] - vertices[1], 2));

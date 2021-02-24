@@ -104,7 +104,7 @@ function download(content, fileName, contentType) {
 }
 
 function test(){
- console.log(newPointLine(1,0.5,3.5,2,17));
+//  console.log(carititik(58,89));
  download( JSON.stringify(obj), 'halo.json', 'text/plain"');
  
 }
