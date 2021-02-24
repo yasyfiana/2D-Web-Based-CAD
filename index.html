@@ -22,6 +22,9 @@
           <button class="top-button" onclick="clear()">Clear Canvas</button>
         </div>
         <h1>Configuration Panel</h1>
+        <div>
+            <button onclick="window.location.href='help.html'"class="btn">Help</button>
+          </div>
         <div class="config-panel">
           <div class="input-container">
             <div class="label">Jumlah Vertices:</div>
@@ -38,10 +41,12 @@
         </div>
       </div>
     </div>
-    <h3>Import & Save Canvas</h3>
-    <input type="file" id="selectFiles" value="Import" /><br />
-    <button id="import"onclick = "uploadFile();">Import</button>
-    <button id="save"onclick = "test();">Save</button>
+    <div className = "imporExport">
+        <h3>Import & Save Canvas</h3>
+        <input type="file" id="selectFiles" value="Import" /><br />
+        <button id="import"onclick = "uploadFile();">Import</button>
+        <button id="save"onclick = "test();">Save</button>
+    </div>
 
 		<script src="../fileLoader/fileLoader.js"></script>
 		<script src="shape/shape.js"></script>
