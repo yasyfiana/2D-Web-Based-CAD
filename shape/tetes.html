@@ -1,14 +1,26 @@
 <html>
 	<head>
 		<title>tubles</title>
+		<script src="../fileLoader/fileLoader.js"></script>
+        <link rel="stylesheet" href="../style/loader.css">
 	</head>
 	<body >
+		<h1>2D-Web-Based-CAD</h1>
+		
         <canvas id="cnvs" width="800" height="600"></canvas>
 
 		<button onclick="line_button()">Line</button>
 		<button onclick="rect_button()">Rectangle(square)</button>
 		<button onclick="polygon_button()">Polygon</button>
 		<button onclick="clear()">Clear Canvas</button>
+
+		<h3>Import file</h3>
+        <input type="file" id="selectFiles" value="Import" /><br />
+        <button id="import"onclick = "uploadFile();">Import</button>
+        <textarea id="result">
+        
+        </textarea>
+        <button id="save"onclick = "test();">Save</button>
 
 		<script src="shape.js"></script>
 		<script src="button.js"></script>

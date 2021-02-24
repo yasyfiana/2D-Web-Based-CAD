@@ -1,5 +1,27 @@
+
 var shape = {
 
+}
+
+function reder_obj(obj){
+  if(obj.type == "line"){
+    render_line(obj.vertices[0].x, obj.vertices[0].y, obj.vertices[1].x, obj.vertices[1].x, obj.colors.R_color, obj.colors.G_color, obj.colors.B_color);
+    console.log("halo");
+  }
+  else if (obj.type == "rect"){
+    var a = parseInt(obj.vertices[0].x) - parseInt(obj.vertices[1].x);
+    var b = parseInt(obj.vertices[0].y)- parseInt(obj.vertices[1].y);
+
+    var c = Math.sqrt( a*a + b*b );
+    console.log(parseInt(c));
+    render_rect(obj.vertices[0].x, obj.vertices[0].y, parseInt(c), obj.colors.R_color, obj.colors.G_color, obj.colors.B_color)
+  }
+  else if (obj.type == "polygon"){
+    
+    render_polygon(obj.vertices, Number(obj.n_vertics), obj.colors.R_color, obj.colors.G_color, obj.colors.B_color );
+    console.log("ini polpol");
+    // console.log(x);
+  }
 }
 
 //Format JSON
@@ -35,14 +57,15 @@ function uploadFile() {
       var result = JSON.parse(e.target.result);
       var formatted = JSON.stringify(result, null, 2);
     	document.getElementById('result').value = formatted;
-      console.log(result[0].vertices[0].x);
+      // console.log(result[0].vertices[0].x);
       
       shape = result;
-      console.log(shape[1].vertices[0].x);
+      // console.log(shape[1].vertices[0].x);
       //CALL THE RENDER FUNCTION
-      // for (i = 0; i < result.length; i++) {
-        
-      // }
+      for (i = 0; i < result.length; i++) {
+        reder_obj(result[i]);
+        // console.log(result[i]);
+      }
     }
 
     fr.readAsText(files.item(0));
