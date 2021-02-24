@@ -298,7 +298,7 @@ function render_polygon(v,n,r,g,b){
     draw();
 }
 
-function newPointLine(x1,y1,x2,y2,new_length){
+function newPointLine(x1, y1, x2, y2, new_length) {
     var a = 0;
     var b = 0;
     var c = 0;
@@ -306,13 +306,13 @@ function newPointLine(x1,y1,x2,y2,new_length){
     var m = (y2-y1)/(x2-x1);
     
     a = 1;
-    b = -2 * x1;
-    c = x1 - (new_length /(1+ (m*m)));
+    b = -2 * x1 + m;
+    c = Math.pow(x1, 2) + (-1 * m * x1) + y1 - new_length;
 
     var x_new = (-1 * b + Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a); 
     var y_new = y1 + m * (x_new - x1);
 
-    var hasil = [ x_new, y_new ];
+    var hasil = [x1, y1, x_new, y_new ];
 
     return(hasil);
 }
@@ -402,6 +402,21 @@ function jarak(x1,y1,x2,y2){
     var b = parseInt(y1)- parseInt(y2);
 
     return (Math.sqrt( a*a + b*b ));
+function calculateSize(n, vertices) {
+    if (n === 2) {
+        return Math.sqrt(Math.pow(vertices[2] - vertices[0], 2) + Math.pow(vertices[3] - vertices[1], 2));
+    } else if (n === 4) {
+        let a = parseInt(vertices[0]) - parseInt(vertices[2]);
+        let b = parseInt(vertices[1])- parseInt(vertices[3]);
+
+        return Math.sqrt( a*a + b*b );
+    } else {
+        return undefined;
+    }
+}
+
+function isTriangularRect(n, vertices) {
+    return (n === 6) && (vertices[4] === vertices[6] && vertices[5] === vertices[7])
 }
 
 // main(moveLine(setLine(50,50,20,50,1,1,0),100),2,"line")

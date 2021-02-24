@@ -26,7 +26,7 @@ function resetCoordinates() {
     n_vertices: 0,
     size: 0,
     color: '#000000',
-    mode: ''
+    mode: 'Polygon'
   } 
 }
 
@@ -106,6 +106,29 @@ function addFields() {
       i++;
     }
   }
+  // Add special input: length (line). Rect is by default a polygon thus
+  // cannot input size
+  let s_container = document.getElementsByClassName('special-input')[0];
+    while (s_container.hasChildNodes()) {
+      s_container.removeChild(s_container.lastChild)
+    }
+  if (number === 2) {
+    coordinates.mode = "Line"
+    s_container = document.getElementsByClassName('special-input')[0];
+    s_container.appendChild(document.createTextNode("Size/Length: "))
+    let s_input = document.createElement("input");
+    s_input.type = "number";
+    s_input.name = "size";
+    s_input.id = "size";
+    s_input.min = 0;
+    s_input.value = 0;
+    s_input.addEventListener('change', function (e) {
+      updateSize(e.target);
+    })
+    s_container.appendChild(s_input)
+  } else {
+    coordinates.mode = "Polygon"
+  }
 }
 
 function editObject(el) {
@@ -118,7 +141,6 @@ function editObject(el) {
   currentTarget = el;
   let shapeObj = obj[id]
 
-  
   // Update fields
   document.getElementById("jumlah").value = shapeObj.count;
   addFields()
@@ -130,17 +152,35 @@ function editObject(el) {
     updateCoordinate(inputX[i])
     updateCoordinate(inputY[i])
   }
-
-  if(parseInt(shapeObj.mode) === 1){
-    addFields();
-    var new_length_input = Number(prompt("Masukan panjang garis baru"),0);
-    var new_x = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[0];
-    var new_y = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[1];
-
-    console.log( new_x );
-    console.log( new_y );
-
+  if (isTriangularRect(shapeObj.count, shapeObj.vertices)) {
+    let s_container = document.getElementsByClassName('special-input')[0];
+    s_container.appendChild(document.createTextNode("Size/Length: "))
+    let s_input = document.createElement("input");
+    s_input.type = "number";
+    s_input.name = "size";
+    s_input.id = "size";
+    s_input.min = 0;
+    s_input.value = 0;
+    s_input.addEventListener('change', function (e) {
+      updateSize(e.target);
+    })
+    s_container.appendChild(s_input)
   }
+  let size = calculateSize(shapeObj.count, shapeObj.vertices)
+  let s_input = document.getElementById('size');
+  s_input.value = Math.floor(size);
+  coordinates.size = Math.floor(size);
+
+  // if(shapeObj.count === 2 || (shapeObj.count === 4)){
+  //   addFields();
+  //   var new_length_input = Number(prompt("Masukan panjang garis baru"),0);
+  //   var new_x = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[0];
+  //   var new_y = newPointLine(shapeObj.vertices[0],shapeObj.vertices[1],shapeObj.vertices[2],shapeObj.vertices[3],new_length_input)[1];
+
+  //   console.log( new_x );
+  //   console.log( new_y );
+
+  // }
   document.getElementById('color').value = convertGlColor(shapeObj.colors);
   console.log(convertGlColor(shapeObj.colors));
   updateColor()
@@ -150,6 +190,26 @@ function editObject(el) {
   toggleEditMode(true);
   console.log('Coordinates:')
   console.log(coordinates)
+}
+
+function updateSize(el) {
+  coordinates.size = parseInt(el.value);
+  let inputX = document.getElementsByName('arrKoordinatX[]');
+  let inputY = document.getElementsByName('arrKoordinatY[]');
+  let newCoord
+  if (isTriangularRect(coordinates.n_vertices, flatten(coordinates, coordinates.n_vertices))) {
+    newCoord = newRect(coordinates.x[0], coordinates.y[0], coordinates.size);
+  } else {
+    newCoord = newPointLine(coordinates.x[0], coordinates.y[0], coordinates.x[1], coordinates.y[1], coordinates.size);
+  }
+  console.log(newCoord)
+  console.log(coordinates)
+  for (let i = 0; i < coordinates.n_vertices; i++){
+    inputX[i].value = Math.floor(newCoord[i * 2]);
+    inputY[i].value = Math.floor(newCoord[i * 2 + 1]);
+    updateCoordinate(inputX[i]);
+    updateCoordinate(inputY[i]);
+  }
 }
 
 function updateColor() {
@@ -235,7 +295,7 @@ function reset() {
   if (currentTarget) {
     currentTarget.classList.remove('object-item-active');
   }
-  currentTarget = undefined
+  currentTarget = undefined;
   toggleEditMode(false);
 }
 
