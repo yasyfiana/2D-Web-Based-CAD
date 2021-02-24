@@ -97,6 +97,32 @@ function addFields() {
   console.log(coordinates)
 }
 
+function editObject(el) {
+  resetCoordinates()
+  let id = parseInt(el.id);
+  if (currentTarget) {
+    currentTarget.classList.remove('object-item-active');
+  }
+  el.classList.add('object-item-active');
+  currentTarget = el;
+  let shapeObj = obj[id]
+  console.log(shapeObj);
+  
+  // Update fields
+  document.getElementById("jumlah").value = shapeObj.count;
+  addFields()
+  let inputX = document.getElementsByName('arrKoordinatX[]');
+  let inputY = document.getElementsByName('arrKoordinatY[]');
+  for (let i = 0; i < shapeObj.count; i++) {
+    inputX[i].value = shapeObj.vertices[i * 2];
+    inputY[i].value = shapeObj.vertices[i * 2 + 1];
+    updateCoordinate(inputX[i])
+    updateCoordinate(inputY[i])
+  }
+  document.getElementById('color').value = convertGlColor(shapeObj.colors);
+  updateColor()
+}
+
 function updateColor() {
   let color = document.getElementById("color").value;
   let textNode = document.getElementsByClassName('color-code')[0].getElementsByTagName('span')[0];
@@ -126,6 +152,7 @@ function convertGlColor(colors) {
   let raw_r = r * 255;
   let raw_g = g * 255;
   let raw_b = b * 255;
+  console.log(`#${raw_r.toString(16)}${raw_g.toString(16)}${raw_b.toString(16)}`);
   return `#${raw_r.toString(16)}${raw_g.toString(16)}${raw_b.toString(16)}`;
 }
 
@@ -155,6 +182,18 @@ function isAllPositiveNumber() {
     }
   }
   return true
+}
+
+function reset() {
+  document.getElementById("jumlah").value = 0
+  addFields()
+  resetCoordinates()
+  document.getElementById('color').value = coordinates.color;
+  updateColor()
+  if (currentTarget) {
+    currentTarget.classList.remove('object-item-active');
+  }
+  currentTarget = undefined
 }
 
 function randomize() {
@@ -191,31 +230,7 @@ function trackObjectUI(id, name) {
   li.innerHTML = `${name} Shape #${counter[name]}`;
   li.classList.add('object-item');
   li.addEventListener('click', function (e) {
-    resetCoordinates()
-    let id = parseInt(e.target.id);
-    if (currentTarget)
-      currentTarget.classList.remove('object-item-active');
-    e.target.classList.add('object-item-active');
-    currentTarget = e.target;
-    let shapeObj = obj[id]
-    console.log(shapeObj);
-    
-    // Update fields
-    document.getElementById("jumlah").value = shapeObj.count;
-    addFields()
-    let inputX = document.getElementsByName('arrKoordinatX[]');
-    let inputY = document.getElementsByName('arrKoordinatY[]');
-    for (let i = 0; i < shapeObj.count; i++) {
-      inputX[i].value = shapeObj.vertices[i * 2];
-      inputY[i].value = shapeObj.vertices[i * 2 + 1];
-      updateCoordinate(inputX[i])
-      updateCoordinate(inputY[i])
-    }
-    document.getElementById('color').value = convertGlColor(shapeObj.colors);
-    updateColor()
-
-    console.log('current target:')
-    console.log(currentTarget)
+    editObject(e.target)
   })
   container.appendChild(li);
 }
